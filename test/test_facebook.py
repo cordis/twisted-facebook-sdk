@@ -14,10 +14,11 @@
 # License for the specific language governing permissions and limitations
 # under the License.
 import os
-import unittest
 
-from txfacebook import *
-from txfacebook.imports import inlineCallbacks
+from twisted.trial import unittest
+from twisted.internet.defer import inlineCallbacks
+
+import txfacebook
 
 
 class FacebookTestCase(unittest.TestCase):
@@ -36,14 +37,8 @@ class TestGetAppAccessToken(FacebookTestCase):
 
     Note that this only tests if the returned token is a string, not
     whether it is valid.
-
-    @TODO: add reactor.run
     """
     @inlineCallbacks
     def test_get_app_access_token(self):
-        token = yield get_app_access_token(self.app_id, self.secret)
+        token = yield txfacebook.get_app_access_token(self.app_id, self.secret)
         assert(isinstance(token, str) or isinstance(token, unicode))
-
-
-if __name__ == '__main__':
-    unittest.main()
