@@ -13,9 +13,11 @@
 # WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the
 # License for the specific language governing permissions and limitations
 # under the License.
-import facebook
 import os
 import unittest
+
+from txfacebook import *
+from txfacebook.imports import inlineCallbacks
 
 
 class FacebookTestCase(unittest.TestCase):
@@ -25,8 +27,7 @@ class FacebookTestCase(unittest.TestCase):
             self.app_id = os.environ["FACEBOOK_APP_ID"]
             self.secret = os.environ["FACEBOOK_SECRET"]
         except KeyError:
-            raise Exception("FACEBOOK_APP_ID and FACEBOOK_SECRET "
-                            "must be set as environmental variables.")
+            raise Exception("FACEBOOK_APP_ID and FACEBOOK_SECRET must be set as environmental variables.")
 
 
 class TestGetAppAccessToken(FacebookTestCase):
@@ -36,9 +37,11 @@ class TestGetAppAccessToken(FacebookTestCase):
     Note that this only tests if the returned token is a string, not
     whether it is valid.
 
+    @TODO: add reactor.run
     """
+    @inlineCallbacks
     def test_get_app_access_token(self):
-        token = facebook.get_app_access_token(self.app_id, self.secret)
+        token = yield get_app_access_token(self.app_id, self.secret)
         assert(isinstance(token, str) or isinstance(token, unicode))
 
 
