@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 from setuptools import setup
 
-exec(open('facebook/__init__.py').read())
+exec(open('txfacebook/__init__.py').read())
 
 setup(
     name='twisted-facebook-sdk',
