@@ -12,7 +12,7 @@ setup(
     maintainer_email='saint.cordis@gmail.com',
     url='https://github.com/cordis/twisted-facebook-sdk',
     license='Apache',
-    packages=['facebook'],
+    packages=['txfacebook'],
     long_description=open('README.rst').read(),
     classifiers=[
         'License :: OSI Approved :: Apache Software License',
