@@ -1,11 +1,9 @@
 #!/usr/bin/env python
 from setuptools import setup
 
-exec(open('txfacebook/__init__.py').read())
-
 setup(
     name='twisted-facebook-sdk',
-    version=__version__,
+    version='0.10.0-alpha1',
     description='This client library is designed to support the Facebook '
                 'Graph API and the official Facebook JavaScript SDK, which '
                 'is the canonical way to implement Facebook authentication.',
