@@ -15,4 +15,12 @@ except ImportError:
 
 from treq import request
 
-__all__ = ['json', 'parse_qs', 'inlineCallbacks', 'maybeDeferred', 'returnValue', 'Deferred', 'request']
+__all__ = [
+    'json',
+    'parse_qs',
+    'inlineCallbacks',
+    'maybeDeferred',
+    'returnValue',
+    'Deferred',
+    'request'
+]

@@ -35,8 +35,15 @@ if user:
 """
 
 
-from txfacebook.imports import parse_qs, json, returnValue, inlineCallbacks, maybeDeferred, request
 from txfacebook.exceptions import GraphAPIError
+from txfacebook.imports import (
+    parse_qs,
+    json,
+    returnValue,
+    inlineCallbacks,
+    maybeDeferred,
+    request as request_func
+)
 
 
 class GraphAPI(object):
@@ -69,9 +76,8 @@ class GraphAPI(object):
 
     """
     endpoint = 'https://graph.facebook.com/v2.1/'
-    request_func = request
 
-    def __init__(self, access_token=None, timeout=None):
+    def __init__(self, access_token=None, timeout=15):
         self.access_token = access_token
         self.timeout = timeout
 
@@ -270,7 +276,7 @@ class GraphAPI(object):
 
         args, body = self._prepare_args_and_body(args, body)
         response = yield self._do_request(method, path, args, body, files, timeout or self.timeout)
-        ret = self._parse_response(response)
+        ret = yield self._parse_response(response)
         returnValue(ret)
 
     def _prepare_args_and_body(self, body, args):
@@ -284,27 +290,28 @@ class GraphAPI(object):
 
         return body, args
 
+    @inlineCallbacks
     def _do_request(self, method, path, args, body, files, timeout):
         kwargs = dict(timeout=timeout, params=args, data=body, files=files)
-        try:
-            return maybeDeferred(self.request_func, method, self.endpoint + path, **kwargs)
-        except self.request_func.HTTPError as e:
-            response = json.loads(e.read())
-            raise GraphAPIError(response)
+        response = yield maybeDeferred(request_func, method, self.endpoint + path, **kwargs)
+        returnValue(response)
 
     @staticmethod
+    @inlineCallbacks
     def _parse_response(response):
-        if 'json' in response.headers['content-type']:
-            ret = response.json()
-        elif 'image/' in response.headers['content-type']:
-            mime_type = response.headers['content-type']
+        content_type = response.headers.getRawHeaders('content-type')[0]
+        if 'image/' in content_type:
+            response_content = yield response.content()
             ret = {
-                'data': response.content,
-                'mime-type': mime_type,
+                'data': response_content,
+                'mime-type': content_type,
                 'url': response.url
             }
+        elif 'json' in content_type or 'javascript' in content_type:
+            ret = yield response.json()
         else:
-            query_string = parse_qs(response.text)
+            response_text = yield response.text()
+            query_string = parse_qs(response_text)
             if 'access_token' in query_string:
                 if 'access_token' in query_string:
                     ret = {
@@ -313,11 +320,12 @@ class GraphAPI(object):
                     if 'expires' in query_string:
                         ret['expires'] = query_string['expires'][0]
                 else:
-                    raise GraphAPIError(response.json())
+                    ret = json.loads(response_text)
+                    raise GraphAPIError(ret)
             else:
                 raise GraphAPIError('Maintype was not text, image, or querystring')
 
         if ret and isinstance(ret, dict) and ret.get('error'):
             raise GraphAPIError(ret)
 
-        return ret
+        returnValue(ret)

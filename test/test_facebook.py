@@ -25,8 +25,10 @@ class FacebookTestCase(unittest.TestCase):
     """Sets up application ID and secret from environment."""
     def setUp(self):
         try:
-            self.app_id = os.environ["FACEBOOK_APP_ID"]
-            self.secret = os.environ["FACEBOOK_SECRET"]
+            self.app_id = '198798870326423'
+            self.secret = '2db4d76fe8a336cf292470c20a5a5684'
+            #self.app_id = os.environ['FACEBOOK_APP_ID']
+            #self.secret = os.environ['FACEBOOK_SECRET']
         except KeyError:
             raise Exception("FACEBOOK_APP_ID and FACEBOOK_SECRET must be set as environmental variables.")
 

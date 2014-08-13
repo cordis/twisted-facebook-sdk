@@ -23,5 +23,7 @@ setup(
     ],
     install_requires=[
         'treq',
+        'pyOpenSSL',
+        'service_identity',
     ],
 )

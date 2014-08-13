@@ -9,7 +9,7 @@ class GraphAPIError(Exception):
     def _get_type(response):
         try:
             return response['error_code']
-        except KeyError:
+        except (KeyError, TypeError):
             return None
 
     @staticmethod
@@ -17,16 +17,16 @@ class GraphAPIError(Exception):
         # OAuth 2.0 Draft 10
         try:
             return data['error_description']
-        except KeyError:
+        except (KeyError, TypeError):
             pass
         # OAuth 2.0 Draft 00
         try:
             return data['error']['message']
-        except KeyError:
+        except (KeyError, TypeError):
             pass
 
         # REST server style
         try:
             return data['error_msg']
-        except KeyError:
+        except (KeyError, TypeError):
             return str(data)
